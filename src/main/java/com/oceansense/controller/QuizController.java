@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;  // Import Map and List
 
-@CrossOrigin(origins = "https://ocean-conservation-541d0.web.app/")
+
 @RestController
 @RequestMapping("/api/quiz")
 public class QuizController {
