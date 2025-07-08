@@ -1,35 +1,16 @@
 package com.oceansense.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.PrePersist;
-
 import java.time.LocalDateTime;
 
-@Entity
 public class ForumPost {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
+    private String id;
     private String title;
-
-    @Column(length = 1000, nullable = false)
     private String content;
-
-    @Column(nullable = false)
     private String author;
-
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     // Constructors
-
     public ForumPost() {
     }
 
@@ -40,12 +21,13 @@ public class ForumPost {
     }
 
     // Getters and Setters
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    // No setter for id as it's auto-generated
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -62,7 +44,7 @@ public class ForumPost {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public String getAuthor() {
         return author;
     }
@@ -70,17 +52,12 @@ public class ForumPost {
     public void setAuthor(String author) {
         this.author = author;
     }
-    
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    // No setter for createdAt as it's set automatically
-
-    // Lifecycle Callback to set createdAt before persisting
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
