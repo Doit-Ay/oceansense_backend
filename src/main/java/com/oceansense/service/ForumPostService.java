@@ -1,36 +1,59 @@
 package com.oceansense.service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.cloud.FirestoreClient;
 import com.oceansense.model.ForumPost;
-import com.oceansense.repository.ForumPostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class ForumPostService {
 
-    @Autowired
-    private ForumPostRepository forumPostRepository;
+    private static final String COLLECTION_NAME = "posts";
 
-    // Retrieve all forum posts
-    public List<ForumPost> getAllPosts() {
-        return forumPostRepository.findAll();
+    public List<ForumPost> getAllPosts() throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        return db.collection(COLLECTION_NAME).get().get().getDocuments().stream()
+                .map(document -> {
+                    ForumPost post = document.toObject(ForumPost.class);
+                    post.setId(document.getId());
+                    return post;
+                })
+                .collect(Collectors.toList());
     }
 
-    // Create a new forum post
-    public ForumPost createPost(ForumPost post) {
-        return forumPostRepository.save(post);
+    public ForumPost createPost(ForumPost post) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        post.setCreatedAt(LocalDateTime.now());
+        DocumentReference docRef = db.collection(COLLECTION_NAME).add(post).get();
+        post.setId(docRef.getId());
+        return post;
     }
 
-    // Delete a forum post by ID
-    public void deletePost(Long id) {
-        forumPostRepository.deleteById(id);
+    public void deletePost(String id) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        db.collection(COLLECTION_NAME).document(id).delete().get();
     }
 
-    // Retrieve a single forum post by ID
-    public Optional<ForumPost> getPostById(Long id) {
-        return forumPostRepository.findById(id);
+    public ForumPost getPostById(String id) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        DocumentReference docRef = db.collection(COLLECTION_NAME).document(id);
+        ApiFuture<DocumentSnapshot> future = docRef.get();
+        DocumentSnapshot document = future.get();
+        if (document.exists()) {
+            ForumPost post = document.toObject(ForumPost.class);
+            post.setId(document.getId());
+            return post;
+        } else {
+            return null;
+        }
     }
 }
