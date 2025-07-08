@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("https://ocean-conservation-541d0.web.app", "http://localhost:3000") // Allow both local and prod
+                        .allowedOrigins("https://oceansense-backend.web.app", "http://localhost:3000") // Allow both local and prod
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(true);
