@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/forum")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class ForumPostController {
 
     @Autowired
